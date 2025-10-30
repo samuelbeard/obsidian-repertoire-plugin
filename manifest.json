@@ -1,9 +1,9 @@
 {
-  "id": "obsidian-repertoire",
-  "name": "Obsidian Repertoire",
+  "id": "repertoire",
+  "name": "Repertoire",
   "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "A plugin for obsidian to help musicians manage their music.",
+  "description": "Helps musicians manage their music with chord sheets and automatic transposing.",
   "author": "Samuel Beard",
   "authorUrl": "https://samuelbeard.xyz",
   "isDesktopOnly": false
