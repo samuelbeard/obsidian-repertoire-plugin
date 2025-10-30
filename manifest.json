@@ -1,7 +1,7 @@
 {
   "id": "repertoire",
   "name": "Repertoire",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "0.15.0",
   "description": "Helps musicians manage their music with chord sheets and automatic transposing.",
   "author": "Samuel Beard",
