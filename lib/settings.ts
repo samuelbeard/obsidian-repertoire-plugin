@@ -15,7 +15,7 @@ export class RepertoireSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Show Key in Block")
+      .setName("Show key in block")
       .setDesc(
         "Show the key and capo information above the chord chart. This helps when referenceing charts in other notes."
       )
