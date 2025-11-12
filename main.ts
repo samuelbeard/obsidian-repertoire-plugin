@@ -19,7 +19,7 @@ export default class ObsidianRepertoirePlugin extends Plugin {
     this.addSettingTab(new RepertoireSettingTab(this.app, this));
 
     this.registerMarkdownCodeBlockProcessor("repertoire", (source, el, ctx) => {
-      el.style.fontFamily = "var(--font-monospace)";
+      el.setCssProps({ fontFamily: "var(--font-monospace)" });
       el.empty();
 
       const fileCache = this.app.metadataCache.getCache(ctx.sourcePath);
@@ -36,15 +36,17 @@ export default class ObsidianRepertoirePlugin extends Plugin {
           errorEl.createEl("strong", {
             text: `Error: Could not transpose key "${key}"`,
           });
-          errorEl.style.color = "var(--text-error)";
+          errorEl.setCssProps({ color: "var(--text-error)" });
           return;
         }
       }
 
       const infoEl = el.createDiv();
-      infoEl.style.marginBottom = "1em";
-      infoEl.style.opacity = "0.7";
-      infoEl.style.fontSize = "0.9em";
+      infoEl.setCssProps({
+        marginBottom: "1em",
+        opacity: "0.7",
+        fontSize: "0.9em",
+      });
 
       let infoText = `Key: ${key}`;
       if (capo > 0) {
@@ -57,7 +59,7 @@ export default class ObsidianRepertoirePlugin extends Plugin {
       const lines = source.split("\n");
       lines.forEach((line) => {
         const lineEl = el.createDiv();
-        lineEl.style.whiteSpace = "pre"; // Preserve whitespace
+        lineEl.setCssProps({ whiteSpace: "pre" });
 
         if (line.trim() === "") {
           lineEl.createEl("br");
@@ -74,7 +76,7 @@ export default class ObsidianRepertoirePlugin extends Plugin {
 
           if (chord) {
             const chordEl = lineEl.createEl("strong");
-            chordEl.style.color = "var(--text-accent)";
+            chordEl.setCssProps({ color: "var(--text-accent)" });
 
             // Regex to separate the root chord from the suffix
             const match = chord.match(/^([A-G][b#]?(?:m|dim|aug)?)(.*)/);
@@ -95,7 +97,7 @@ export default class ObsidianRepertoirePlugin extends Plugin {
             const sectionText = part.substring(1, part.length - 1);
             const sectionEl = lineEl.createEl("strong");
             sectionEl.createEl("em", { text: sectionText });
-            sectionEl.style.opacity = "0.7";
+            sectionEl.setCssProps({ opacity: "0.7" });
           } else {
             lineEl.appendText(part);
           }
