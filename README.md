@@ -1,4 +1,4 @@
-# Obsidian Repertoire Plugin
+# Repertoire Plugin
 A plugin for Obsidian that allows you to write chord charts using Roman numeral notation.
 
 ## Features
