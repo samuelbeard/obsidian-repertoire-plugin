@@ -1,6 +1,12 @@
+import {
+  chordForDegree,
+  isChordNumberToken,
+  normalizeCapo,
+  parseChordNumber,
+  parseKey,
+  type Key,
+} from "degree-chords";
 import { MarkdownView, Plugin } from "obsidian";
-import { getChordFromNumber } from "./lib/chordParser";
-import transposeKey from "./lib/transposeKey";
 import { RepertoireSettingTab } from "./lib/settings";
 
 interface RepertoirePluginSettings {
@@ -24,17 +30,38 @@ export default class ObsidianRepertoirePlugin extends Plugin {
 
       const fileCache = this.app.metadataCache.getCache(ctx.sourcePath);
       const key = fileCache?.frontmatter?.Key || "C";
-      const capo = fileCache?.frontmatter?.Capo || 0;
+      const capoRaw = fileCache?.frontmatter?.Capo;
+      const capo =
+        capoRaw === undefined || capoRaw === null || capoRaw === "" ? 0 : Number(capoRaw);
 
-      let displayKey = key;
-      if (capo > 0 && capo <= 12) {
-        const transposed = transposeKey(key, capo);
-        if (transposed) {
-          displayKey = transposed;
-        } else {
+      let parsedKey: Key;
+      try {
+        parsedKey = parseKey(key);
+      } catch {
+        const errorEl = el.createDiv();
+        errorEl.createEl("strong", {
+          text: `Error: Could not parse key "${key}"`,
+        });
+        errorEl.setCssProps({ color: "var(--text-error)" });
+        return;
+      }
+
+      let capoFret: number | undefined;
+      if (capo > 0) {
+        if (!Number.isInteger(capo)) {
           const errorEl = el.createDiv();
           errorEl.createEl("strong", {
-            text: `Error: Could not transpose key "${key}"`,
+            text: `Error: Capo must be an integer between 0 and 11 (got ${capoRaw})`,
+          });
+          errorEl.setCssProps({ color: "var(--text-error)" });
+          return;
+        }
+        try {
+          capoFret = normalizeCapo(capo);
+        } catch {
+          const errorEl = el.createDiv();
+          errorEl.createEl("strong", {
+            text: `Error: Capo must be an integer between 0 and 11 (got ${capoRaw})`,
           });
           errorEl.setCssProps({ color: "var(--text-error)" });
           return;
@@ -72,7 +99,11 @@ export default class ObsidianRepertoirePlugin extends Plugin {
         parts.forEach((part) => {
           const hasParen = part.startsWith("(") && part.endsWith(")");
           const cleanWord = part.replace(/[.,!$%^&*;:{}=\-_`~()]/g, "");
-          const chord = getChordFromNumber(displayKey, cleanWord);
+          let chord: string | null = null;
+          if (isChordNumberToken(cleanWord)) {
+            const parsed = parseChordNumber(cleanWord);
+            chord = chordForDegree(parsed, parsedKey, { capo: capoFret });
+          }
 
           if (chord) {
             const chordEl = lineEl.createEl("strong");
@@ -114,7 +145,7 @@ export default class ObsidianRepertoirePlugin extends Plugin {
             leaf.view.previewMode.rerender(true);
           }
         }
-      })
+      }),
     );
   }
 
